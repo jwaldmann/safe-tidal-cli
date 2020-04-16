@@ -56,7 +56,8 @@ work tidal block = do
                   $ (STC.|< STC.orbit (pure $ i-1)) p
               else message $ "non-existing channel"
 
- -- | a block is a contiguous sequence of non-empty lines
+-- | What is a "block"? Depends on flok,
+-- https://github.com/munshkr/flok/issues/64#issuecomment-614589330
 blocks :: [String] -> [[String]]
 blocks [] = []
 blocks css =
