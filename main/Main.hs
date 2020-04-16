@@ -19,9 +19,13 @@ main = do
       , STC.oPort = 57120})
     (STC.defaultConfig {STC.cFrameTimespan = 1/20})
     
+  void $ LHI.runInterpreter
+    $ catch (core tidal)
+    $ \ (e :: SomeException) -> message $ show e
+
+core tidal = do
   -- more settings at
   -- https://github.com/tidalcycles/tidali/blob/master/src/Main.hs
-  void $ LHI.runInterpreter $ do
     LHI.set [ LHI.languageExtensions
               LHI.:= [ LHI.OverloadedStrings ]
             , LHI.installedModulesInScope LHI.:= False
@@ -37,26 +41,21 @@ main = do
     mapM_ (work tidal . concat) $ blocks $ lines input
     message "finished"
 
-message :: String -> InterpreterT IO _
+message :: String -> LHI.InterpreterT IO ()
 message s = liftIO $ hPutStrLn stderr s
 
-work :: Stream -> String -> IO ()
+work :: STC.Stream -> String -> LHI.InterpreterT IO ()
 work tidal contents = 
   case LHE.parseExp contents of
       LHE.ParseFailed srclog msg -> do
         message $ "ParseFailed" <> msg
       LHE.ParseOk e -> do
         message $ "ParseOk" <> show e
-        res <- catch ( Right <$> LHI.interpret contents
-              (LHI.as :: STC.IO ())
-            ( \ (e :: SomeException) -> return $ Left e)
-        case res of
-          Left e -> do
-            message $ "InterpreterLeft"
-            message $ show e
-          Right x -> do
-            message $ "InterpreterRight"
-            liftIO $ STC.exec tidal x
+        catch ( do
+           x <- LHI.interpret contents (LHI.as :: STC.Op ())
+           message $ "InterpreterOK"
+           liftIO $ STC.exec tidal x
+         ) $ \ (e :: SomeException) -> message $ show e
 
 -- | What is a "block"? Depends on flok,
 -- https://github.com/munshkr/flok/issues/64#issuecomment-614589330
