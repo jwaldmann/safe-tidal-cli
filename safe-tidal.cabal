@@ -1,0 +1,22 @@
+cabal-version:       >=1.10
+name:                safe-tidal
+version:             0.1.1
+synopsis:  restricted interpreter for tidalcycles
+license:        GPL-3
+author:              Johannes Waldmann
+maintainer:          @
+build-type:          Simple
+
+library
+  hs-source-dirs: src
+  exposed-modules: Sound.Tidal.Safe.Context,
+                   Sound.Tidal.Safe.Boot
+  build-depends: base, tidal, mtl
+  default-language:    Haskell2010
+                     
+executable safe-tidal-cli
+  hs-source-dirs: main
+  main-is: Main.hs
+  build-depends: base,  safe-tidal,
+                 hint, haskell-src-exts, exceptions
+  default-language:    Haskell2010
