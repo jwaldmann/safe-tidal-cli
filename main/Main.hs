@@ -1,7 +1,7 @@
 {-# language PatternSignatures #-}
 
 import qualified Language.Haskell.Interpreter as LHI
-import qualified Sound.Tidal.Context as STC
+import qualified Sound.Tidal.Safe.Context as STC
 import qualified Language.Haskell.Exts as LHE
 import Control.Monad (void)
 import Control.Monad.IO.Class
@@ -22,39 +22,41 @@ main = do
   -- more settings at
   -- https://github.com/tidalcycles/tidali/blob/master/src/Main.hs
   void $ LHI.runInterpreter $ do
-    LHI.setImports
-      [ "Prelude", "Sound.Tidal.Context", "Data.Map" ]
     LHI.set [ LHI.languageExtensions
-              LHI.:= [ LHI.OverloadedStrings ] ]
-       
+              LHI.:= [ LHI.OverloadedStrings ]
+            , LHI.installedModulesInScope LHI.:= False
+            ]
+    LHI.setImports
+      [ "Prelude", "Data.Map"
+      , "Sound.Tidal.Safe.Context"
+      , "Sound.Tidal.Safe.Boot"
+      ]
+
     -- FIXME: replace lazy IO by some streaming mechanism?
     input <- liftIO getContents 
-    mapM_ (work tidal) $ blocks $ lines input
+    mapM_ (work tidal . concat) $ blocks $ lines input
     message "finished"
 
+message :: String -> InterpreterT IO _
 message s = liftIO $ hPutStrLn stderr s
 
--- | for now, parse expn. of type (Int, ControlPattern)
-work tidal block = do
-  let contents = concat block 
+work :: Stream -> String -> IO ()
+work tidal contents = 
   case LHE.parseExp contents of
       LHE.ParseFailed srclog msg -> do
         message $ "ParseFailed" <> msg
       LHE.ParseOk e -> do
         message $ "ParseOk" <> show e
         res <- catch ( Right <$> LHI.interpret contents
-              (LHI.as :: (Int, STC.ControlPattern)) )
+              (LHI.as :: STC.IO ())
             ( \ (e :: SomeException) -> return $ Left e)
         case res of
           Left e -> do
+            message $ "InterpreterLeft"
             message $ show e
-          Right (i,p) -> do
-            message $ "InterpreterRight" ++ show (i,p)
-            if 1 <= i && i <= 12
-              then do
-                liftIO $ STC.streamReplace tidal i
-                  $ (STC.|< STC.orbit (pure $ i-1)) p
-              else message $ "non-existing channel"
+          Right x -> do
+            message $ "InterpreterRight"
+            liftIO $ STC.exec tidal x
 
 -- | What is a "block"? Depends on flok,
 -- https://github.com/munshkr/flok/issues/64#issuecomment-614589330
