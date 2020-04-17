@@ -59,10 +59,10 @@ newtype Op r = Op ( ReaderT Stream IO r )
 exec :: Stream -> Op r -> IO r
 exec s (Op m) = runReaderT m s
 
-op1 f b   = Op $ do a <- ask; lift $ f a
-op2 f b   = Op $ do a <- ask; lift $ f a b 
-op3 f b c = Op $ do a <- ask; lift $ f a b c
-op4 f b c d = Op $ do a <- ask; lift $ f a b c d
+op1 f         = Op $ do a <- ask; lift $ f a
+op2 f b       = Op $ do a <- ask; lift $ f a b 
+op3 f b c     = Op $ do a <- ask; lift $ f a b c
+op4 f b c d   = Op $ do a <- ask; lift $ f a b c d
 op5 f b c d e = Op $ do a <- ask; lift $ f a b c d e
 
 streamReplace = op3 C.streamReplace
