@@ -2,7 +2,6 @@
 
 import qualified Language.Haskell.Interpreter as I
 import qualified Sound.Tidal.Safe.Context as C
-import qualified Language.Haskell.Exts as E
 import Control.Monad (void)
 import Control.Monad.IO.Class
 import Control.Monad.Catch

@@ -17,6 +17,5 @@ library
 executable safe-tidal-cli
   hs-source-dirs: main
   main-is: Main.hs
-  build-depends: base,  safe-tidal,
-                 hint, haskell-src-exts, exceptions
+  build-depends: base,  safe-tidal, hint, exceptions
   default-language:    Haskell2010
