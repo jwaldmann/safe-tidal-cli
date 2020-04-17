@@ -46,12 +46,6 @@ message s = liftIO $ hPutStrLn stderr s
 
 work :: C.Stream -> String -> I.InterpreterT IO ()
 work tidal contents = 
-  case E.parseExp contents of
-      E.ParseFailed srcloc msg -> do
-        -- TODO: output source lines around this location
-        message $ unlines [ "ParseFailed", msg ]
-      E.ParseOk e -> 
-        -- message $ "ParseOk" <> show e
         ( do
            x <- I.interpret contents (I.as :: C.Op ())
            -- message $ "InterpreterOK"
