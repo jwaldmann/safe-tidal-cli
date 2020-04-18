@@ -20,6 +20,7 @@ cabal install tidal safe-tidal --lib # installs libraries
 cabal install safe-tidal  --constraint 'tidal==1.4.9' # installs executable
 ```
 
+beware of cabal env-file hell,
 cf. https://github.com/jwaldmann/safe-tidal-cli/issues/5
 
 ## Goals
