@@ -1,6 +1,7 @@
 # safe-tidal-cli
 
-This is for running tidal-as-a-service
+This is for running
+"[tidal](https://tidalcycles.org/)-as-a-service"
 (for collaborative editors) in a somewhat safer way.
 
 See https://github.com/tidalcycles/Tidal/issues/627 
@@ -46,7 +47,8 @@ These expressions appear to be of type `IO ()`
 but actually we have re-defined `d1` etc.
 to use a safe wrapper
 that only allows Tidal's top-level operators
-(cf. https://github.com/jwaldmann/safe-tidal-cli/issues/8).
+(cf. https://github.com/jwaldmann/safe-tidal-cli/issues/8)
+and probibits any other form of `IO`.
 
 You can write any expression of that type, e.g.,
 ```
@@ -59,25 +61,29 @@ hush
 
 `safe-tidal-cli` will reject any expression of any other type,
 in particular, of type `IO a`,
-so no-one can `readFile "/etc/passwd"`.
+so no-one can execute `readFile "/etc/passwd"`.
 It will also reject harmless expressions like `1+2`.
 We may want to allow that.
 
 `safe-tidal-cli` rejects all non-expressions.
 That means you cannot interact with the state
-of the `ghci` session,
-by writing definitions (`let foo = bar`),
-or by asking queries (`:type`, `:info`, `:doc`).
+of the `ghci` session. You cannot write
+
+* imports (`import System.IO.Unsafe`),
+* definitions (`let foo = bar`),
+* queries (`:type`, `:info`, `:doc`).
+
 We may lift the latter restriction.
 
 `safe-tidal-cli` will exit when `stdin` is closed
 and all blocks are processed.
 
-## Acknowledgments
+## Related Work
 
-The idea of using an embedded `ghci` via `hint`
-for `tidal` is not new,
+The idea of using the GHC API (via `hint`) for `tidal`
+is not new,
 cf. https://github.com/tidalcycles/tidali/blob/master/src/Main.hs
 The idea of wrapping `IO` to make it safe,
 is also not new (TODO: references?).
-Perhaps these ideas are combined here for the first time.
+Perhaps the combination is new.
+
