@@ -37,7 +37,7 @@ core tidal = do
 
     -- FIXME: replace lazy IO by some streaming mechanism?
     input <- liftIO getContents 
-    mapM_ (work tidal . concat) $ blocks $ lines input
+    mapM_ (work tidal . unlines) $ blocks $ lines input
     message "finished"
 
 message :: String -> I.InterpreterT IO ()
