@@ -30,7 +30,7 @@ core tidal = do
             , I.installedModulesInScope I.:= False
             ]
     I.setImports
-      [ "Prelude", "Data.Map"
+      [ "Prelude"
       , "Sound.Tidal.Safe.Context"
       , "Sound.Tidal.Safe.Boot"
       ]
