@@ -52,9 +52,10 @@ import qualified Sound.Tidal.Context as C
 import Sound.Tidal.Context
   (Stream, Pattern, ControlPattern, Time)
 import Control.Monad.Reader
+import Control.Monad.Catch
 
 newtype Op r = Op ( ReaderT Stream IO r )
-  deriving (Functor, Applicative, Monad)
+  deriving (Functor, Applicative, Monad, MonadCatch,MonadThrow)
 
 exec :: Stream -> Op r -> IO r
 exec s (Op m) = runReaderT m s
