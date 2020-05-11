@@ -5,6 +5,8 @@ import qualified Sound.Tidal.Safe.Context as C
 import Control.Monad (void)
 import Control.Monad.IO.Class
 import Control.Monad.Catch
+-- import qualified Mueval.Resources as MR
+import System.Timeout
 import System.IO
 import Data.Char (isSpace)
 
@@ -46,9 +48,10 @@ message s = liftIO $ hPutStrLn stderr s
 work :: C.Stream -> String -> I.InterpreterT IO ()
 work tidal contents = 
         ( do
+           -- TODO: need timeout for evaluation of pattern:
            x <- I.interpret contents (I.as :: C.Op ())
-           -- message $ "InterpreterOK"
-           liftIO $ C.exec tidal x
+           -- have timeout for execution of pattern:
+           liftIO $ void $ timeout (1*10^ 6) $ C.exec tidal x
         )
       `catch` \ (e :: I.InterpreterError) -> message (unlines $ case e of
           I.UnknownError s -> [ "UnknownError", s ]
