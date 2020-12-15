@@ -27,7 +27,7 @@ module Sound.Tidal.Safe.Context
   , streamSetB
   , transition
   , module C
-  , startTidal, superdirtTarget, OSCTarget(..)
+  , startTidal, superdirtTarget, Target(..)
   )
 where
 
@@ -42,7 +42,7 @@ import Sound.Tidal.Pattern as C
 import Sound.Tidal.Scales as C
 import Sound.Tidal.Simple as C
 import Sound.Tidal.Stream
-  (startTidal, OSCTarget(..), superdirtTarget)
+  (startTidal, superdirtTarget, Target(..))
 -- import Sound.Tidal.Transition as C
 import Sound.Tidal.UI as C
 import Sound.Tidal.Version as C

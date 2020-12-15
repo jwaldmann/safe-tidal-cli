@@ -1,6 +1,6 @@
 cabal-version:       >=1.10
 name:                safe-tidal
-version:             0.2.0
+version:             0.2.1
 synopsis:  restricted interpreter for tidalcycles
 license:        GPL-3
 author:              Johannes Waldmann
