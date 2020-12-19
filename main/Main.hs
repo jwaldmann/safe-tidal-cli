@@ -87,13 +87,16 @@ work tidal contents =
                    v <- I.eval contents
                    message stdout $ "value: " <> v
         )
-      `catch` ( \ (e :: I.InterpreterError) -> message stderr (unlines $ case e of
+      `catches`
+      [ Handler $ \ (e :: I.InterpreterError) ->
+        message stderr $ unlines $ case e of
           I.UnknownError s -> [ "UnknownError", s ]
           I.WontCompile gs -> "WontCompile" : map I.errMsg gs
           I.NotAllowed s   -> [ "NotAllowed", s ]
           I.GhcException s -> [ "GhcException", s ]
-        ) )
-      `catch` \ (e :: SomeException) -> message stderr $ show e
+      , Handler $ \ (e :: SomeException) ->
+        message stderr $ show e
+      ]
 
 -- | What is a "block"? Depends on flok,
 -- https://github.com/munshkr/flok/issues/64#issuecomment-614589330
