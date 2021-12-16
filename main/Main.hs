@@ -52,7 +52,7 @@ second = 10^6 :: Int
 -- and run (evaluation and print) for at most 1 second
 message :: Handle -> String -> I.InterpreterT IO ()
 message h s = do
-  let safe = unlines . safe_list 10 ["..."] . map (safe_list 80 "...") . lines
+  let safe = unlines . safe_list 10 ["..."] . map (safe_list 120 "...") . lines
   liftIO $ void $ timeout (1 * second) $ do
     hPutStrLn h (safe s) ; hFlush h
 
